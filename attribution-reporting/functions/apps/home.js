@@ -33,11 +33,11 @@ home.get('/', (req, res) => {
   })
 })
 
-if (process.env.NODE_ENV == 'development') {
-  const listener = app.listen(process.env.PORT || PORT, () => {
-    console.log(
-      '🏡 Demo home server is listening on port ' + listener.address().port
-    )
-  })
-}
+// if (process.env.NODE_ENV == 'development') {
+//   const listener = app.listen(process.env.PORT || PORT, () => {
+//     console.log(
+//       '🏡 Demo home server is listening on port ' + listener.address().port
+//     )
+//   })
+// }
 exports.home = functions.https.onRequest(home)

@@ -145,7 +145,7 @@ adtech.get('/ad-script-click-js', (req, res) => {
 
 adtech.get(
   ['/register-source-js', '/register-source-image', '/register-source-href'],
-  (req, res) => {
+   (req, res) => {
     const attributionDestination = process.env.ADVERTISER_URL
     // For demo purposes, sourceEventId is a random ID. In a real system, this ID would be tied to a unique serving-time identifier mapped to any information an adtech provider may need
     const sourceEventId = Math.floor(Math.random() * 1000000000000000)
@@ -168,6 +168,14 @@ adtech.get(
       debug_reporting: true
     }
 
+    console.log("SOURCE - COOKIE: ", req.cookies['receive-cookie-deprecation'] || "NO COOKIE");
+    console.log("SOURCE - LABEL: ", req.headers['sec-cookie-deprecation'] || 'NO LABEL');
+    res.setHeader(
+      'Set-Cookie',
+      'receive-cookie-deprecation=any-value; Secure; HttpOnly; Path=/; SameSite=None; Partitioned'
+    )
+    console.log("SOURCE - TRYING TO ADD receive-cookie-deprecation COOKIE");
+
     // Send a response with the header Attribution-Reporting-Register-Source in order to instruct the browser to register a source event
     res.set(
       'Attribution-Reporting-Register-Source',
@@ -175,15 +183,17 @@ adtech.get(
     )
     log('REGISTERING SOURCE \n', headerConfig)
 
-    if (req.originalUrl === '/register-source-image') {
+    if (req.originalUrl.endsWith('/register-source-image')) {
       // Send back the response
       res.status(200).sendFile('blue-shoes.png', {
         root: path.join(__dirname, '../../sites/adtech')
       })
-    } else if (req.originalUrl === '/register-source-js') {
+    } else if (req.originalUrl.endsWith('/register-source-js')) {
       res.status(200).send('OK')
-    } else if (req.originalUrl === '/register-source-href') {
+    } else if (req.originalUrl.endsWith('/register-source-href')) {
       res.redirect(advertiserUrl)
+    } else {
+      log('UNHANDLED URL', req.originalUrl)
     }
   }
 )
@@ -303,15 +313,15 @@ adtech.get('/reports', (req, res) => {
 adtech.post(
   '/.well-known/attribution-reporting/report-event-attribution',
   async (req, res) => {
-    console.log(
-      '\x1b[1;31m%s\x1b[0m',
-      `🚀 Adtech has received an event-level report from the browser`
-    )
-    console.log(
-      'REGULAR REPORT RECEIVED (event-level):\n=== \n',
-      req.body,
-      '\n=== \n'
-    )
+    // console.log(
+    //   '\x1b[1;31m%s\x1b[0m',
+    //   `🚀 Adtech has received an event-level report from the browser`
+    // )
+    // console.log(
+    //   'REGULAR REPORT RECEIVED (event-level):\n=== \n',
+    //   req.body,
+    //   '\n=== \n'
+    // )
     res.sendStatus(200)
   }
 )
@@ -320,15 +330,15 @@ adtech.post(
 adtech.post(
   '/.well-known/attribution-reporting/debug/report-event-attribution',
   async (req, res) => {
-    console.log(
-      '\x1b[1;31m%s\x1b[0m',
-      `🚀 Adtech has received a primary debug report for event-level from the browser`
-    )
-    console.log(
-      'DEBUG REPORT RECEIVED (event-level):\n=== \n',
-      req.body,
-      '\n=== \n'
-    )
+    // console.log(
+    //   '\x1b[1;31m%s\x1b[0m',
+    //   `🚀 Adtech has received a primary debug report for event-level from the browser`
+    // )
+    // console.log(
+    //   'DEBUG REPORT RECEIVED (event-level):\n=== \n',
+    //   req.body,
+    //   '\n=== \n'
+    // )
     res.sendStatus(200)
   }
 )
@@ -337,15 +347,15 @@ adtech.post(
 adtech.post(
   '/.well-known/attribution-reporting/report-aggregate-attribution',
   async (req, res) => {
-    console.log(
-      '\x1b[1;31m%s\x1b[0m',
-      `🚀 Adtech has received an aggregatable report from the browser`
-    )
-    console.log(
-      'REGULAR REPORT RECEIVED (aggregate):\n=== \n',
-      req.body,
-      '\n=== \n'
-    )
+    // console.log(
+    //   '\x1b[1;31m%s\x1b[0m',
+    //   `🚀 Adtech has received an aggregatable report from the browser`
+    // )
+    // console.log(
+    //   'REGULAR REPORT RECEIVED (aggregate):\n=== \n',
+    //   req.body,
+    //   '\n=== \n'
+    // )
 
     res.sendStatus(200)
   }
@@ -355,15 +365,15 @@ adtech.post(
 adtech.post(
   '/.well-known/attribution-reporting/debug/report-aggregate-attribution',
   async (req, res) => {
-    console.log(
-      '\x1b[1;31m%s\x1b[0m',
-      `🚀 Adtech has received a primary debug report for aggregatable from the browser`
-    )
-    console.log(
-      'DEBUG REPORT RECEIVED (aggregate):\n=== \n',
-      req.body,
-      '\n=== \n'
-    )
+    // console.log(
+    //   '\x1b[1;31m%s\x1b[0m',
+    //   `🚀 Adtech has received a primary debug report for aggregatable from the browser`
+    // )
+    // console.log(
+    //   'DEBUG REPORT RECEIVED (aggregate):\n=== \n',
+    //   req.body,
+    //   '\n=== \n'
+    // )
 
     res.sendStatus(200)
   }
@@ -373,11 +383,11 @@ adtech.post(
 adtech.post(
   '/.well-known/attribution-reporting/debug/verbose',
   async (req, res) => {
-    console.log(
-      '\x1b[1;31m%s\x1b[0m',
-      `🚀 Adtech has received one or more verbose debug reports from the browser`
-    )
-    console.log('VERBOSE REPORT(S) RECEIVED:\n=== \n', req.body, '\n=== \n')
+    // console.log(
+    //   '\x1b[1;31m%s\x1b[0m',
+    //   `🚀 Adtech has received one or more verbose debug reports from the browser`
+    // )
+    // console.log('VERBOSE REPORT(S) RECEIVED:\n=== \n', req.body, '\n=== \n')
 
     res.sendStatus(200)
   }

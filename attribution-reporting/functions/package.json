@@ -2,7 +2,7 @@
   "name": "attribution-reporting-api-demo",
   "version": "1.0.0",
   "scripts": {
-    "serve": "firebase emulators:start --only functions",
+    "serve": "NODE_ENV=dev firebase emulators:start --project none",
     "shell": "firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
